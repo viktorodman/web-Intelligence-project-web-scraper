@@ -21,14 +21,9 @@ export default class ScraperController {
 
     public async createDataset(req: Request, res: Response): Promise<void> {
         try {
-            let startTime = process.hrtime();
             await this.scraperService.createDataset();
-            const test = process.hrtime(startTime)
-            const queryTime = Number((test[0] + (test[1] / 1e9)).toFixed(5))
 
-            console.log(queryTime);
-
-            res.status(200).json({ time: queryTime })
+            res.status(200).json({ time: "queryTime" })
         } catch (error) {
             console.log(error);
         }

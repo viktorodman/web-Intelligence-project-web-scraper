@@ -22,6 +22,16 @@ export const saveWikiDataToFile = async (wikiData: Map<string, WikiPage>): Promi
     return filenames;
 }
 
+export const readWordsFromFile = async (filename: string): Promise<string[]> => {
+    const wordsFromFile = await readFile(path.join(WORDS_PATH, filename), 'utf8');
+    return wordsFromFile.split(' ');
+}
+
+export const readLinksFromFile = async (filename: string): Promise<string[]> => {
+    const linksFromFile = await readFile(path.join(LINKS_PATH, filename), 'utf8');
+    return linksFromFile.split('\n');
+}
+
 export const saveRawHTMLToFile = async (rawHTML: Map<string, string>, baseURL: string) => {
     const savedPages: string[] = [];
     let startTime = process.hrtime();
