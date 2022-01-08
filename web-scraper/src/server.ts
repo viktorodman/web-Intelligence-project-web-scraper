@@ -1,6 +1,6 @@
 import express, { Application } from "express";
 import morgan from "morgan";
-import IndexRouter from "../routers/index-router";
+import IndexRouter from "./routers/index-router";
 
 export default class Server {
     private _app: Application = express();
