@@ -3,16 +3,68 @@ import cheerio from 'cheerio';
 import path from 'path';
 import { URL,  } from 'url';
 import { WikiPage } from '../types/page-types';
+import { getRawHTMLFromFiles, saveRawHTMLToFile, saveWikiDataToFile } from '../utils/file-io';
 
 
 export default class ScraperService {
     private _URL = new URL("https://en.wikipedia.org/wiki/Nintendo")
     private NUM_OF_LINKS = 200;
 
-    public async startScraping() {
-        const linksData = await this.scrapeWikiArticles(this._URL.href);
+    public async createDataset() {
+        const rawHTML: Map<string, string> = await getRawHTMLFromFiles()
+        const pageData = this.createDatasetsFromHTML(rawHTML);
+        return await saveWikiDataToFile(pageData);
+    }
 
-        console.log(linksData);
+    public async scrapeAndStoreHMTL() {
+        const rawHTML = await this.scrapeRawHMTL(this._URL.href);
+        const links: string[] = await saveRawHTMLToFile(rawHTML, this._URL.origin);
+        return links;
+    }
+
+    private createDatasetsFromHTML(rawHTML: Map<string, string>) {
+        const pageData = new Map<string, WikiPage>();
+
+        for (const [page, html] of rawHTML) {
+            const $ = cheerio.load(html);
+            const allLinks = this.getAllLinks($);
+            const allWords = this.getAllWords($);
+
+            pageData.set(page, {
+                links: allLinks,
+                paragraphs: allWords
+            });
+        }
+
+        return pageData;
+    }
+
+    private async scrapeRawHMTL(startingArticleURL: string) {
+        const rawHTML = new Map<string, string>();
+        const response = await axios.get(startingArticleURL);
+        const $ = cheerio.load(response.data);
+        const potentialArticleLinks = $('#mw-content-text a');
+
+        for (const element of potentialArticleLinks) {
+            const wikiLink = $(element).attr('href');
+            if (wikiLink && this.linkIsValid(wikiLink) && this.shouldUseLink2(wikiLink, rawHTML)) {
+                console.log("Scraping HTML for link: " + wikiLink);
+                const linkResponse = await axios.get(this._URL.origin + wikiLink);
+                rawHTML.set(wikiLink, linkResponse.data);
+            }
+        }
+
+        return rawHTML;
+    }
+
+    private shouldUseLink2(linkURL: string, currentDataset: Map<string, string>) {
+        const tempURL = new URL(this._URL.origin + linkURL)
+        
+        return (
+            this.urlHasNoExtension(tempURL) && 
+            !currentDataset.has(tempURL.pathname) && 
+            currentDataset.size < this.NUM_OF_LINKS
+        )
     }
 
 
