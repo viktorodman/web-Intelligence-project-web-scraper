@@ -1,0 +1,23 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.searchInput {
+    padding: 14px;
+    outline: unset;
+    margin-bottom: 10px;
+    border: none;
+    border:solid 1px #ccc;
+    border-radius: 10px;
+    width: 16%;
+    font-size: medium;
+    letter-spacing: 1px;
+}
+
+.searchInput:focus {
+    outline: unset;
+}
