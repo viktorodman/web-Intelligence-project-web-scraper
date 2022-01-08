@@ -33,7 +33,7 @@ const createPageDBFromDatasets = async (filenames: string[]) => {
     const pageDB: PageDB = new PageDB();
 
     for (const filename of filenames) {
-        const page: Page = new Page(`wiki/${filenames}`);
+        const page: Page = new Page(`/wiki/${filename}`);
         const wordsFromFile = await readWordsFromFile(filename);
         const linksFromFile = await readLinksFromFile(filename);
 

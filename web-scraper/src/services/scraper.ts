@@ -47,7 +47,7 @@ export default class ScraperService {
 
         for (const element of potentialArticleLinks) {
             const wikiLink = $(element).attr('href');
-            if (wikiLink && this.linkIsValid(wikiLink) && this.shouldUseLink2(wikiLink, rawHTML)) {
+            if (wikiLink && this.linkIsValid(wikiLink) && this.shouldUseLink(wikiLink, rawHTML)) {
                 console.log("Scraping HTML for link: " + wikiLink);
                 const linkResponse = await axios.get(this._URL.origin + wikiLink);
                 rawHTML.set(wikiLink, linkResponse.data);
@@ -57,7 +57,7 @@ export default class ScraperService {
         return rawHTML;
     }
 
-    private shouldUseLink2(linkURL: string, currentDataset: Map<string, string>) {
+    private shouldUseLink(linkURL: string, currentDataset: Map<string, string>) {
         const tempURL = new URL(this._URL.origin + linkURL)
         
         return (
@@ -65,39 +65,6 @@ export default class ScraperService {
             !currentDataset.has(tempURL.pathname) && 
             currentDataset.size < this.NUM_OF_LINKS
         )
-    }
-
-
-    private async scrapeWikiArticles(startingArticleURL: string) {
-        const response = await axios.get(startingArticleURL);
-        const $ = cheerio.load(response.data);
-        const potentialArticleLinks = $('#mw-content-text a');
-        const linksData = await this.scrapeData(potentialArticleLinks, $);
-
-        return linksData
-    }
-
-    private async scrapeData(potentialLinks: cheerio.Cheerio, $: cheerio.Root): Promise<Map<string, WikiPage>> {
-        const linksData = new Map<string, WikiPage>();
-        for (const element of potentialLinks) {
-            const wikiLink = $(element).attr('href');
-
-            if (wikiLink && this.linkIsValid(wikiLink) && this.shouldUseLink(wikiLink, linksData)) {
-                console.log("Scraping link: " + wikiLink);
-                const response = await axios.get(this._URL.origin + wikiLink);
-                const $2 = cheerio.load(response.data);
-                
-                const allLinks = this.getAllLinks($2);
-                const allWords = this.getAllWords($2);
-
-                linksData.set(wikiLink, {
-                  links: allLinks,
-                  paragraphs: allWords  
-                })
-            }
-        }
-
-        return linksData
     }
 
     private getAllWords($: cheerio.Root) {
@@ -131,17 +98,6 @@ export default class ScraperService {
         }
 
         return uniqueLinks;
-    }
-
-
-    private shouldUseLink(linkURL: string, currentDataset: Map<string, WikiPage>) {
-        const tempURL = new URL(this._URL.origin + linkURL)
-        
-        return (
-            this.urlHasNoExtension(tempURL) && 
-            !currentDataset.has(tempURL.pathname) && 
-            currentDataset.size < this.NUM_OF_LINKS
-        )
     }
 
     private urlHasNoExtension(link: URL) {

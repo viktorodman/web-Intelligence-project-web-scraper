@@ -9,7 +9,7 @@ type Data = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
     console.log(req.query.phrase)
     const  searchPhrase  = req.query.phrase as string;
-    let data = await fetch(`http://localhost:5000/api/db?phrase=${searchPhrase}`)
+    let data = await fetch(`http://localhost:5000/api/search?phrase=${searchPhrase}`)
 
     data = await data.json()
 

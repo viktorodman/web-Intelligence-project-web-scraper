@@ -1,7 +1,6 @@
 import { WikiPage } from "../types/page-types";
-import { readFile, readdir, writeFile, mkdir,  unlink, appendFile} from 'fs/promises'
+import { readFile, readdir, writeFile,  unlink } from 'fs/promises'
 import path from "path/posix";
-import { DirFiles } from "../types/file-io-types";
 const LINKS_PATH = "data/Links/Nintendo"
 const WORDS_PATH = "data/Words/Nintendo"
 const HTML_PATH = "data/HTML/Nintendo"
