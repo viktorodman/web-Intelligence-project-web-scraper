@@ -1,0 +1,34 @@
+.button {
+    background-color: #3c3f41;
+    border: 0;
+    border-radius: .5rem;
+    box-sizing: border-box;
+    color: #d2d7da;
+    font-weight: 600;
+    line-height: 1.25rem;
+    padding: .40rem 1rem;
+    text-align: center;
+    text-decoration: none #D1D5DB solid;
+    text-decoration-thickness: auto;
+    box-shadow: 0 1px 3px 0 rgba(36, 36, 36, 0.425), 0 1px 2px 0 rgba(0, 0, 0, 0.445);
+    cursor: pointer;
+    min-width: 110px;
+    margin: 2px;
+}
+
+.wrapper {
+    /* align-self: center; */
+}
+
+.button:hover {
+    background-color: #5c6063;
+}
+  
+.button:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+  
+.button:focus-visible {
+    box-shadow: none;
+}
